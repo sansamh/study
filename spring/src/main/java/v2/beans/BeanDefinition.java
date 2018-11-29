@@ -19,47 +19,47 @@ public interface BeanDefinition {
     String SCOPE_PROTOTYPE = "prototype";
 
     /**
-     *  获取beanClass 可以为对象的class 也可以为静态工厂bean的class
+     * 获取beanClass 可以为对象的class 也可以为静态工厂bean的class
      */
     Class<?> getBeanClass();
 
     /**
-     *  获取bean的作用范围
+     * 获取bean的作用范围
      */
     String getScope();
 
     /**
-     *  是否单例模式
+     * 是否单例模式
      */
     boolean isSingleton();
 
     /**
-     *  是否原型模式
+     * 是否原型模式
      */
     boolean isPrototyoe();
 
     /**
-     *  获取工厂方法bean的名字
+     * 获取工厂方法bean的名字
      */
     String getFactoryBeanName();
 
     /**
-     *  获取工厂方法 方法名
+     * 获取工厂方法 方法名
      */
     String getFactoryMethodName();
 
     /**
-     *  获取初始化方法
+     * 获取初始化方法
      */
     String getInitMethodName();
 
     /**
-     *  获取销毁方法
+     * 获取销毁方法
      */
     String getDestoryMethodName();
 
     /**
-     *  验证beanDefinition是否合法
+     * 验证beanDefinition是否合法
      */
     default boolean validate() {
         //beanClass 不存在的时候 工厂方法bean名和工厂方法名必须存在
@@ -101,4 +101,9 @@ public interface BeanDefinition {
      * 获取构造器参数
      */
     List<?> getConstructorArgumentValues();
+
+    /**
+     * 属性依赖
+     */
+    List<PropertyValue> getPropertyValues();
 }

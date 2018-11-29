@@ -7,7 +7,7 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 /**
- * @version 1.0
+ * @version 2.0
  * @description:
  * @author: 侯春兵
  * @Date: 16:10 2018/11/27
@@ -31,6 +31,8 @@ public class GenericBeanDefinition implements BeanDefinition {
     private Method factoryMethod;
 
     private List<?> constructorArgumentValues;
+
+    private List<PropertyValue> propertyValues;
     //v2 新增
 
     public void setBeanClass(Class<?> beanClass) {
@@ -120,6 +122,15 @@ public class GenericBeanDefinition implements BeanDefinition {
     @Override
     public List<?> getConstructorArgumentValues() {
         return constructorArgumentValues;
+    }
+
+    @Override
+    public List<PropertyValue> getPropertyValues() {
+        return propertyValues;
+    }
+
+    public void setPropertyValues(List<PropertyValue> propertyValues) {
+        this.propertyValues = propertyValues;
     }
 
     public void setConstructorArgumentValues(List<?> constructorArgumentValues) {

@@ -7,13 +7,14 @@ import org.springframework.util.CollectionUtils;
 
 import java.io.Closeable;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * @version 1.0
+ * @version 2.0
  * @description: 默认工厂
  * @author: 侯春兵
  * @Date: 14:26 2018/11/27
@@ -24,6 +25,10 @@ public class DefaultBeanFactory implements BeanFactory, BeanDefinitionRegistry, 
 
     private ConcurrentHashMap<String, Object> beanMap = new ConcurrentHashMap(256);
     private ConcurrentHashMap<String, BeanDefinition> beanDefintionMap = new ConcurrentHashMap(256);
+    /**
+     * 记录正在创建的beanName到threadLocal里 解决循环依赖 a->b->c->a 会造成死循环
+     */
+    private ThreadLocal<Set<String>> buildingBeans = new ThreadLocal<>();
 
     @Override
     public void registryBeanDefinition(String beanName, BeanDefinition beanDefinition) throws BeanDefinitionRegistryException {
@@ -34,7 +39,7 @@ public class DefaultBeanFactory implements BeanFactory, BeanDefinitionRegistry, 
             throw new BeanDefinitionRegistryException(String.format("名为：[%s]的beanDefinition校验不通过：[%s]", beanName, beanDefinition));
         }
         //可以设置重名beanName的出库方式
-        if (beanMap.contains(beanName)) {
+        if (beanDefintionMap.contains(beanName)) {
             throw new BeanDefinitionRegistryException(String.format("名为：[%s]的beanDefinition已存在：[%s]", beanName, this.getBeanDefinition(beanName)));
         }
 
@@ -68,6 +73,21 @@ public class DefaultBeanFactory implements BeanFactory, BeanDefinitionRegistry, 
         BeanDefinition beanDefinition = beanDefintionMap.get(beanName);
         Objects.requireNonNull(beanDefinition, "beanDefinition不能为空");
 
+        //记录正在创建的beanName 检测循环依赖
+        Set<String> beans = buildingBeans.get();
+        if (beans == null) {
+            beans = new HashSet<>(16);
+        }
+        if (!beans.contains(beanName)) {
+            beans.add(beanName);
+            buildingBeans.set(beans);
+        } else {
+            String[] strings = new String[beans.size()];
+            beans.toArray(strings);
+            buildingBeans.remove();
+            throw new Exception("创建[" + beanName + "]时检测到循环依赖，正在创建的bean有：[" + Arrays.toString(strings) + "]");
+        }
+
         Class<?> beanClass = beanDefinition.getBeanClass();
         if (beanClass != null) {
             if (StringUtils.isBlank(beanDefinition.getFactoryMethodName())) {
@@ -85,12 +105,53 @@ public class DefaultBeanFactory implements BeanFactory, BeanDefinitionRegistry, 
             log.info("通过普通工厂方法创建对象：[{}]", instance);
         }
 
+        //实例创建好之后，移除记录
+        beans.remove(beanName);
+        //初始化
         doInit(instance, beanDefinition);
+        //属性依赖 初始化
+        doSetPropertyValues(instance, beanDefinition);
 
         if (beanDefinition.isSingleton()) {
             this.beanMap.put(beanName, instance);
         }
         return instance;
+    }
+
+    private void doSetPropertyValues(Object o, BeanDefinition beanDefinition) throws Exception {
+        if (CollectionUtils.isEmpty(beanDefinition.getPropertyValues())) {
+            return;
+        }
+        List<PropertyValue> propertyValues = beanDefinition.getPropertyValues();
+
+        for (PropertyValue propertyValue : propertyValues) {
+            String name = propertyValue.getName();
+            if (StringUtils.isBlank(name)) {
+                continue;
+            }
+            Object value = propertyValue.getValue();
+
+            Field f = o.getClass().getDeclaredField(name);
+            f.setAccessible(true);
+
+            Object v = null;
+            if (value instanceof BeanReference) {
+                v = this.getBean(((BeanReference) value).getBeanName());
+            } else if (value instanceof Object[]) {
+                // TODO 处理集合中的bean引用
+            } else if (value instanceof Collection) {
+                // TODO 处理集合中的bean引用
+            } else if (value instanceof Properties) {
+                // TODO 处理properties中的bean引用
+            } else if (value instanceof Map) {
+                // TODO 处理Map中的bean引用
+            } else {
+                v = value;
+            }
+
+            f.set(o, v);
+            log.info("bean：[{}]给属性[{}]设置value[{}]", o, f.getName(), v);
+        }
     }
 
     /**
@@ -165,7 +226,8 @@ public class DefaultBeanFactory implements BeanFactory, BeanDefinitionRegistry, 
         }
         //未到找对应构造函数时 循环所有构造函数 依次匹配参数类型
         Constructor<?>[] declaredConstructors = beanDefinition.getBeanClass().getDeclaredConstructors();
-        outer: for (Constructor<?> c : declaredConstructors) {
+        outer:
+        for (Constructor<?> c : declaredConstructors) {
             Class<?>[] parameterTypes = c.getParameterTypes();
             if (paramaTypes.length == parameterTypes.length) {
                 for (int j = 0; j < parameterTypes.length; j++) {
@@ -245,8 +307,9 @@ public class DefaultBeanFactory implements BeanFactory, BeanDefinitionRegistry, 
      */
     private Object createBeanByStaticFactoryMethod(BeanDefinition beanDefinition) throws Exception {
         Class<?> beanClass = beanDefinition.getBeanClass();
-        Method method = beanClass.getDeclaredMethod(beanDefinition.getFactoryMethodName(), null);
-        return method.invoke(beanClass, null);
+        Object[] realValues = getRealValues(beanDefinition.getConstructorArgumentValues());
+        Method method = getRealFactoryMethod(beanDefinition, realValues, null);
+        return method.invoke(beanClass, realValues);
     }
 
     /**
@@ -260,8 +323,60 @@ public class DefaultBeanFactory implements BeanFactory, BeanDefinitionRegistry, 
      */
     private Object createBeanByFactoryMethod(BeanDefinition beanDefinition) throws Exception {
         Object o = doGetBean(beanDefinition.getFactoryBeanName());
-        Method method = o.getClass().getDeclaredMethod(beanDefinition.getFactoryMethodName(), null);
-        return method.invoke(o, null);
+        Object[] realValues = getRealValues(beanDefinition.getConstructorArgumentValues());
+        Method method = getRealFactoryMethod(beanDefinition, realValues, o.getClass());
+        return method.invoke(o, realValues);
+    }
+
+    /**
+     * 获取工厂方法
+     *
+     * @param beanDefinition
+     * @param realValues
+     * @param objectClass    工厂产生的实例对象class 静态工厂为null 不需要通过IOC容器产生对象 直接为beanCalss
+     * @return
+     */
+    private Method getRealFactoryMethod(BeanDefinition beanDefinition, Object[] realValues, Class objectClass) throws Exception {
+        if (Objects.isNull(objectClass)) {
+            objectClass = beanDefinition.getBeanClass();
+        }
+        if (Objects.isNull(realValues)) {
+            return objectClass.getDeclaredMethod(beanDefinition.getFactoryMethodName(), null);
+        }
+        //原型bean 缓存factoryMethod
+        if (!Objects.isNull(beanDefinition.getFactoryMethod())) {
+            return beanDefinition.getFactoryMethod();
+        }
+        Method m = null;
+        Class[] paramTypes = new Class[realValues.length];
+        int index = 0;
+        for (Object realValue : realValues) {
+            paramTypes[index++] = realValue.getClass();
+        }
+
+        outer:
+        for (Method method : objectClass.getDeclaredMethods()) {
+            Class<?>[] parameterTypes = method.getParameterTypes();
+            if (parameterTypes.length == paramTypes.length) {
+                for (int i = 0; i < parameterTypes.length; i++) {
+                    if (!paramTypes[i].isAssignableFrom(parameterTypes[i])) {
+                        continue outer;
+                    }
+                    m = method;
+                    break outer;
+                }
+            }
+        }
+
+        if (m != null) {
+            //原型bean 缓存工厂方法
+            if (beanDefinition.isPrototyoe()) {
+                beanDefinition.setFactoryMethod(m);
+            }
+            return m;
+        } else {
+            throw new Exception("未找到对应的工厂方法：[" + beanDefinition + "]");
+        }
     }
 
     @Override

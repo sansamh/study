@@ -8,14 +8,16 @@ package v2.beans;
  */
 public interface BeanDefinitionRegistry {
     /**
-     *  注册beanDefinition
+     * 注册beanDefinition
+     *
      * @param beanName
      * @param beanDefinition
      */
     void registryBeanDefinition(String beanName, BeanDefinition beanDefinition) throws BeanDefinitionRegistryException;
 
     /**
-     *  根据beanName获取beanDefinition
+     * 根据beanName获取beanDefinition
+     *
      * @param beanName
      * @return
      */
@@ -23,6 +25,7 @@ public interface BeanDefinitionRegistry {
 
     /**
      * 校验是否存在包含此beanName的beanDefinition
+     *
      * @param beanName
      * @return
      */

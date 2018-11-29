@@ -1,7 +1,7 @@
 package v2.beans;
 
 /**
- * @version 1.0
+ * @version 2.0
  * @description: bean工厂
  * @author: 侯春兵
  * @Date: 11:16 2018/11/27

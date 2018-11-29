@@ -103,8 +103,10 @@ public class DefaultBeanFactory implements BeanFactory, BeanDefinitionRegistry, 
      */
     private void doInit(Object instance, BeanDefinition beanDefinition) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         if (StringUtils.isNotBlank(beanDefinition.getInitMethodName())) {
-            Method method = instance.getClass().getDeclaredMethod(beanDefinition.getInitMethodName(), null);
-            method.invoke(instance, null);
+            Class<?> clz = null;
+            Method method = instance.getClass().getDeclaredMethod(beanDefinition.getInitMethodName(), clz);
+            Object [] objects = null;
+            method.invoke(instance, objects);
             log.info("执行init方法：[{}]", beanDefinition.getInitMethodName());
         }
     }
@@ -129,8 +131,10 @@ public class DefaultBeanFactory implements BeanFactory, BeanDefinitionRegistry, 
      */
     private Object createBeanByStaticFactoryMethod(BeanDefinition beanDefinition) throws Exception {
         Class<?> beanClass = beanDefinition.getBeanClass();
-        Method method = beanClass.getDeclaredMethod(beanDefinition.getFactoryMethodName(), null);
-        return method.invoke(beanClass, null);
+        Class<?> clz = null;
+        Method method = beanClass.getDeclaredMethod(beanDefinition.getFactoryMethodName(), clz);
+        Object [] objects = null;
+        return method.invoke(beanClass, objects);
     }
 
     /**
@@ -143,8 +147,10 @@ public class DefaultBeanFactory implements BeanFactory, BeanDefinitionRegistry, 
      */
     private Object createBeanByFactoryMethod(BeanDefinition beanDefinition) throws Exception {
         Object o = doGetBean(beanDefinition.getFactoryBeanName());
-        Method method = o.getClass().getDeclaredMethod(beanDefinition.getFactoryMethodName(), null);
-        return method.invoke(o, null);
+        Class<?> clz = null;
+        Method method = o.getClass().getDeclaredMethod(beanDefinition.getFactoryMethodName(), clz);
+        Object [] objects = null;
+        return method.invoke(o, objects);
     }
 
     @Override
@@ -158,8 +164,10 @@ public class DefaultBeanFactory implements BeanFactory, BeanDefinitionRegistry, 
             beanDefinition = this.beanDefintionMap.get(beanName);
             if (beanDefinition.isSingleton() && StringUtils.isNotBlank(beanDefinition.getDestoryMethodName())) {
                 try {
-                    method = next.getValue().getClass().getDeclaredMethod(beanDefinition.getDestoryMethodName(), null);
-                    method.invoke(next.getValue(), null);
+                    Class<?> clz = null;
+                    method = next.getValue().getClass().getDeclaredMethod(beanDefinition.getDestoryMethodName(), clz);
+                    Object [] objects = null;
+                    method.invoke(next.getValue(), objects);
                     log.info("执行bean[" + beanName + "] " + beanDefinition + " 的 销毁方法！");
                 } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
                         | InvocationTargetException e1) {

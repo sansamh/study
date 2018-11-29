@@ -13,7 +13,6 @@ public class BeanReference {
 
     /**
      * 获得引用的beanName
-     *
      */
     public String getBeanName() {
         return this.beanName;
