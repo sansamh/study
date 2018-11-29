@@ -23,8 +23,8 @@ public class DefaultBeanFactory implements BeanFactory, BeanDefinitionRegistry, 
 
     private Logger log = LoggerFactory.getLogger(DefaultBeanFactory.class);
 
-    private ConcurrentHashMap<String, Object> beanMap = new ConcurrentHashMap(256);
-    private ConcurrentHashMap<String, BeanDefinition> beanDefintionMap = new ConcurrentHashMap(256);
+    private ConcurrentHashMap<String, Object> beanMap = new ConcurrentHashMap<>(256);
+    private ConcurrentHashMap<String, BeanDefinition> beanDefintionMap = new ConcurrentHashMap<>(256);
     /**
      * 记录正在创建的beanName到threadLocal里 解决循环依赖 a->b->c->a 会造成死循环
      */
