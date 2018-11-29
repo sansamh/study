@@ -362,9 +362,9 @@ public class DefaultBeanFactory implements BeanFactory, BeanDefinitionRegistry, 
                     if (!paramTypes[i].isAssignableFrom(parameterTypes[i])) {
                         continue outer;
                     }
-                    m = method;
-                    break outer;
                 }
+                m = method;
+                break outer;
             }
         }
 
