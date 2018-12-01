@@ -26,10 +26,9 @@ public class AopProxyUtils {
 			return method.invoke(target, args);
 		} else {
 			//责任链调用 增强
-
+            AopAdviceChainInvocation chainInvocation = new AopAdviceChainInvocation(shouldApplyAdvice, target, proxy, method, args);
+            return chainInvocation.invoke();
 		}
-
-		return null;
 	}
 
 	private static List<Object> getShouldApplyAdvice(Class<?> aClass, Method method, List<Advisor> matchAdvisor, BeanFactory beanFactory) throws Exception {

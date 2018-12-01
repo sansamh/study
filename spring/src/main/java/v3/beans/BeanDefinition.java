@@ -106,4 +106,16 @@ public interface BeanDefinition {
      * 属性依赖
      */
     List<PropertyValue> getPropertyValues();
+
+    /**
+     * 缓存构造函数真正的参数
+     * @return
+     */
+    Object[] getConstructorArgumentRealValues();
+
+    /**
+     * 缓存构造函数真正的参数
+     * @return
+     */
+    void setConstructorArgumentRealValues(Object[] values);
 }

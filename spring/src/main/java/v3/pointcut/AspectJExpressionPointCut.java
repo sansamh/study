@@ -32,7 +32,7 @@ public class AspectJExpressionPointCut implements PointCut {
 
 	@Override
 	public boolean matchMethod(Method method) {
-		ShadowMatch shadowMatch = pointcutExpression.matchesAdviceExecution(method);
+		ShadowMatch shadowMatch = pointcutExpression.matchesMethodExecution(method);
 		return shadowMatch.alwaysMatches();
 	}
 }

@@ -4,6 +4,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
+import v3.aop.AdvisorAotuProxyCreater;
+import v3.aware.BeanFactoryAware;
 
 import java.io.Closeable;
 import java.lang.reflect.Constructor;
@@ -29,6 +31,8 @@ public class DefaultBeanFactory implements BeanFactory, BeanDefinitionRegistry, 
      * 记录正在创建的beanName到threadLocal里 解决循环依赖 a->b->c->a 会造成死循环
      */
     private ThreadLocal<Set<String>> buildingBeans = new ThreadLocal<>();
+
+    private List<BeanPostProcessor> beanPostProcessorList = new ArrayList<>(16);
 
     @Override
     public void registryBeanDefinition(String beanName, BeanDefinition beanDefinition) throws BeanDefinitionRegistryException {
@@ -59,6 +63,14 @@ public class DefaultBeanFactory implements BeanFactory, BeanDefinitionRegistry, 
     @Override
     public Object getBean(String beanName) throws Exception {
         return doGetBean(beanName);
+    }
+
+    @Override
+    public void registeBeanPostProcessor(BeanPostProcessor beanPostProcessor) {
+        this.beanPostProcessorList.add(beanPostProcessor);
+        if (beanPostProcessor instanceof BeanFactoryAware) {
+            ((BeanFactoryAware) beanPostProcessor).setBeanFactory(this);
+        }
     }
 
     protected Object doGetBean(String beanName) throws Exception {
@@ -111,11 +123,32 @@ public class DefaultBeanFactory implements BeanFactory, BeanDefinitionRegistry, 
         doInit(instance, beanDefinition);
         //属性依赖 初始化
         doSetPropertyValues(instance, beanDefinition);
-
+        //aop
+        try {
+            instance = applyPostProcessAfterInitialization(instance, beanName);
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
         if (beanDefinition.isSingleton()) {
             this.beanMap.put(beanName, instance);
         }
         return instance;
+    }
+
+    // 应用bean初始化前的处理
+    private Object applyPostProcessBeforeInitialization(Object bean, String beanName) throws Throwable {
+        for (BeanPostProcessor bpp : this.beanPostProcessorList) {
+            bean = bpp.postProcessBeforeInitialization(bean, beanName);
+        }
+        return bean;
+    }
+
+    // 应用bean初始化后的处理
+    private Object applyPostProcessAfterInitialization(Object bean, String beanName) throws Throwable {
+        for (BeanPostProcessor bpp : this.beanPostProcessorList) {
+            bean = bpp.postProcessAfterInitialization(bean, beanName);
+        }
+        return bean;
     }
 
     private void doSetPropertyValues(Object o, BeanDefinition beanDefinition) throws Exception {
@@ -188,7 +221,12 @@ public class DefaultBeanFactory implements BeanFactory, BeanDefinitionRegistry, 
                 return beanDefinition.getBeanClass().newInstance();
             } else {
                 //有参数的构造
-                return getRealConstructor(beanDefinition, values).newInstance(values);
+                //缓存真正的构造函数的参数 v3
+                beanDefinition.setConstructorArgumentRealValues(values);
+                // 缓存构造函数由determineConstructor 中移到了这里，无论原型否都缓存，因为后面AOP需要用
+                Constructor realConstructor = getRealConstructor(beanDefinition, values);
+                beanDefinition.setConstructor(realConstructor);
+                return realConstructor.newInstance(values);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -241,11 +279,11 @@ public class DefaultBeanFactory implements BeanFactory, BeanDefinitionRegistry, 
             }
         }
 
-        //对应原型bean 缓存构造函数
+        //对应原型bean 缓存构造函数 -> v3 上层缓存
         if (constructor != null) {
-            if (beanDefinition.isPrototyoe()) {
+            /*if (beanDefinition.isPrototyoe()) {
                 beanDefinition.setConstructor(constructor);
-            }
+            }*/
             return constructor;
         } else {
             throw new Exception("未到找对应的构造函数：[" + beanDefinition + "]");

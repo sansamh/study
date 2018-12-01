@@ -34,9 +34,7 @@ public class PreBuildBeanFactory extends DefaultBeanFactory {
                 BeanDefinition beanDefinition = getBeanDefinition(beanName);
                 if (beanDefinition.isSingleton()) {
                     this.doGetBean(beanName);
-                    if (logger.isDebugEnabled()) {
                         logger.debug("preInstantiate: name=" + beanName + " " + beanDefinition);
-                    }
                 }
             }
         }

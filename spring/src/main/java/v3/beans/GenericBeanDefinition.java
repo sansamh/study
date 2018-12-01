@@ -35,6 +35,9 @@ public class GenericBeanDefinition implements BeanDefinition {
     private List<PropertyValue> propertyValues;
     //v2 新增
 
+    //v3 add
+    private Object [] constructorRealValues;
+
     public void setBeanClass(Class<?> beanClass) {
         this.beanClass = beanClass;
     }
@@ -127,6 +130,16 @@ public class GenericBeanDefinition implements BeanDefinition {
     @Override
     public List<PropertyValue> getPropertyValues() {
         return propertyValues;
+    }
+
+    @Override
+    public Object[] getConstructorArgumentRealValues() {
+        return constructorRealValues;
+    }
+
+    @Override
+    public void setConstructorArgumentRealValues(Object[] values) {
+        this.constructorRealValues = values;
     }
 
     public void setPropertyValues(List<PropertyValue> propertyValues) {

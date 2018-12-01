@@ -1,5 +1,7 @@
 package v3.beans;
 
+import java.util.List;
+
 /**
  * @version 2.0
  * @description: bean工厂
@@ -12,4 +14,6 @@ public interface BeanFactory {
      * 通过beanName 获取 对象
      */
     Object getBean(String beanName) throws Exception;
+
+    void registeBeanPostProcessor(BeanPostProcessor beanPostProcessor);
 }

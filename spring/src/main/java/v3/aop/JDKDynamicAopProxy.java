@@ -39,7 +39,7 @@ public class JDKDynamicAopProxy implements AopProxy, InvocationHandler {
 
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-		return null;
+		return AopProxyUtils.applyAdvice(target, method, args, matchAdvisor, proxy, beanFactory);
 	}
 
 	@Override
@@ -49,6 +49,9 @@ public class JDKDynamicAopProxy implements AopProxy, InvocationHandler {
 
 	@Override
 	public Object getProxy(ClassLoader classLoader) {
+        if (logger.isDebugEnabled()) {
+            logger.debug("为" + target + "创建jdk动态代理。");
+        }
 		return Proxy.newProxyInstance(classLoader, target.getClass().getInterfaces(), this);
 	}
 }

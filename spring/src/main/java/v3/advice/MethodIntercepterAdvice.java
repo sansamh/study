@@ -1,5 +1,6 @@
 package v3.advice;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
@@ -17,5 +18,5 @@ public interface MethodIntercepterAdvice {
 	 * @param target  增强方法所在的对象
 	 * @return
 	 */
-	Object invoke(Method method, Object [] args, Object target);
+	Object invoke(Method method, Object [] args, Object target) throws InvocationTargetException, IllegalAccessException;
 }
