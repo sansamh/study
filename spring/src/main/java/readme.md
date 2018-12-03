@@ -1,0 +1,1 @@
+* java.net.MalformedURLException 使用URL类时 URL url = new URL(String urlText); 通常是urlText有问题抛出的异常
