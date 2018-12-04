@@ -2,6 +2,9 @@ package v3.context.application;
 
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+import v3.beans.BeanDefinitionRegistry;
+import v3.context.reader.BeanDefinitonReader;
+import v3.context.reader.XmlBeanDefinitonReader;
 import v3.context.resource.ClassPathResource;
 import v3.context.resource.FileSystemResource;
 import v3.context.resource.Resource;
@@ -15,9 +18,13 @@ public class XmlApplicationContext extends AbstractApplicationContext {
 
     private List<Resource> resources;
 
+    private BeanDefinitonReader reader;
+
     public XmlApplicationContext(String ... location) throws MalformedURLException {
         //加载resource资源
         load(location);
+        this.reader = new XmlBeanDefinitonReader((BeanDefinitionRegistry) this.beanFactory);
+        reader.loadBeanDefinition((Resource[]) resources.toArray());
     }
 
     private void load(String ... location) throws MalformedURLException {
