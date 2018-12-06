@@ -11,6 +11,8 @@ public class CustomFileLoader {
 
     /**
      * 获取类似spring加载spring.handlers那种文件properties啊
+     * 会去搜索所有jar包 包括自己的目录下这个文件夹下的文件
+     * eg. fileName = "META-INF/spring.handlers"
      */
     public static Properties loadCustomerFileLileSpring(String fileName) throws IOException {
         Properties properties = new Properties();
