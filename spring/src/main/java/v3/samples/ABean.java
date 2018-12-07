@@ -1,5 +1,8 @@
 package v3.samples;
 
+import lombok.Data;
+
+@Data
 public class ABean implements IABean{
 
 	private String name;

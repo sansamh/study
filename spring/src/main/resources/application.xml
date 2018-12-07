@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="abean" class="v3.samples.ABean"
+    	init-method="init" destroy-method="destroy">
+    	<constructor-arg type="java.lang.String" value="abean01" />
+    	<constructor-arg ref="cbean" />
+    	<property name="name" value="xxxx" />
+    </bean>
+
+    <bean id="cbean" class="v3.samples.CBean">
+    	<constructor-arg type="java.lang.String" value="cbean01" />
+    </bean>
+
+	<bean id="person" class="v3.samples.factorybean.Person">
+		<constructor-arg type="java.lang.String" index="0" value="person"/>
+		<constructor-arg type="int" index="1" value="23"/>
+		<constructor-arg type="java.lang.String" index="2" value="china"/>
+	</bean>
+
+	<bean id="personFactoryBean" class="v3.samples.factorybean.PersonFactoryBean"/>
+</beans>
+	
+	
+	

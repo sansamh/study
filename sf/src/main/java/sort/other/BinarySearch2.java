@@ -39,6 +39,33 @@ public class BinarySearch2 {
 
 	public static void main(String[] args) {
 		int [] arr = {4,5,6,7,0,1,2};
-		System.out.println(find(arr, 0));
+		System.out.println(test(arr, 1));
+	}
+
+	public static int test(int [] arr, int target) {
+		int low = 0, high = arr.length - 1, middle;
+		while (low <= high) {
+			middle = low + ((high - low) >> 1);
+			if (arr[middle] == target) {
+				return middle;
+			}
+			if (arr[middle] >= arr[low]) {
+				//左侧有序
+				if (arr[low] <= target && target <= arr[middle]) {
+					high = middle - 1;
+				} else {
+					low = middle + 1;
+				}
+			} else {
+				if (arr[middle] <= target && target <= arr[high]) {
+					low = middle + 1;
+				} else {
+					high = middle - 1;
+				}
+			}
+
+		}
+
+		return -1;
 	}
 }
