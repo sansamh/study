@@ -45,6 +45,10 @@ public class Leetcode3 {
             map.put(s.charAt(i), i);
             res = Math.max(res, i - j + 1);
 
+            if ( i == s.length() - 1) {
+                System.out.println(map);
+            }
+
         }
         return res;
     }
@@ -53,7 +57,7 @@ public class Leetcode3 {
 
 
     public static void main(String[] args) {
-        String s = "qrsvbspk";
+        String s = "pwwkew";
         System.out.println(longestSubstringWithoutRepeatingCharacters(s));
     }
 }
