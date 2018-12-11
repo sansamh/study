@@ -2,9 +2,9 @@ package leetcode;
 
 import leetcode.data.TreeNode;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class Leetcode144 {
     /**
@@ -92,7 +92,7 @@ public class Leetcode144 {
         Stack<TreeNode> stack = new Stack<>();
         stack.push(root);   //stack 1
         while (!stack.isEmpty()) {
-            //先看左边的节点 不为空就取出来放进stack
+            //当一个节点没有左节点时 才是第一个出栈的节点 出栈后需要判断是否有右节点
             TreeNode pop = stack.peek();    // (1 pop = 1   // (2 pop = 2   // (3 pop = 4
             if (pop.left != null) { // (1 1.left = 2; stack = [2,1]; l.left == null; // (2 pop.left == null
                 stack.push(pop.left);
@@ -160,5 +160,68 @@ public class Leetcode144 {
             }
         }
         return result;
+    }
+
+    /**
+     * 层遍历 广度优先 使用队列
+     */
+    public List<List<Integer>> bfs(TreeNode root) {
+		List<List<Integer>> res = new ArrayList<>();
+		if (root == null) {
+			return res;
+		}
+		Queue<TreeNode> queue = new LinkedBlockingQueue<>();
+		queue.offer(root);
+
+		while (!queue.isEmpty()) {
+			//当前树层 有多少个节点
+			int levelSize = queue.size();
+			List<Integer> levelData = new ArrayList<>();
+			for (int i = 0; i < levelSize; i++) {
+				TreeNode poll = queue.poll();
+				if (poll.left != null) {
+					queue.offer(poll.left);
+				}
+				if (poll.right != null) {
+					queue.offer(poll.right);
+				}
+				levelData.add(poll.val);
+			}
+
+			res.add(levelData);
+		}
+
+		return res;
+    }
+    /**
+     * 层遍历 广度优先 不使用队列
+	 * 其实就是每次都只存储一层的节点，然后遍历这一层的节点，是真正的按层遍历的思想。每次遍历的都是当前层，记录的都是当前层的下一层。
+     */
+    public List<List<Integer>> bfs2(TreeNode root) {
+		List<List<Integer>> res = new ArrayList<>();
+		if (root == null) {
+			return res;
+		}
+		List<TreeNode> list = new ArrayList<>();
+		list.add(root);
+
+		while (!list.isEmpty()) {
+			List<TreeNode> temp = new ArrayList<>();
+			List<Integer> levelData = new ArrayList<>();
+
+			for (TreeNode node : list) {
+				levelData.add(node.val);
+				if (node.left != null){
+					temp.add(node.left);
+				}
+				if (node.right != null){
+					temp.add(node.right);
+				}
+			}
+			list = temp;
+			res.add(levelData);
+		}
+
+		return res;
     }
 }
