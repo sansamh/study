@@ -1,6 +1,7 @@
 package leetcode;
 
 import leetcode.data.ListNode;
+import sort.util.ListNodeUtils;
 
 /**
  * @version 1.0
@@ -38,7 +39,7 @@ public class Leetcode92 {
 		ListNode cur = pre.next;
 		ListNode post = cur.next;
 		//只需要m-n次交换即可
-		for (int j = 0; j < m - n; j++) {
+		for (int j = 0; j < n - m; j++) {
 			//交换
 			cur.next = post.next;
 			post.next = pre.next;
@@ -49,4 +50,8 @@ public class Leetcode92 {
 
 		return dummy.next;
 	}
+
+    public static void main(String[] args) {
+        ListNodeUtils.print(reverse(ListNodeUtils.createListNode(new int[]{1,2,3,4,5}), 2, 4));
+    }
 }
