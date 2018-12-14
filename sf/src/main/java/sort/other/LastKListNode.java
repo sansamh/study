@@ -13,14 +13,23 @@ public class LastKListNode {
     public static ListNode findLastK1(ListNode h, int k) {
         if (h == null) return null;
         ListNode f = h, s = h;
-
+        int count = 1;
         for (int i = 0; i < k - 1; i++) {
-            f = f.next;
+			count ++;
+            if (f.next != null) {
+				f = f.next;
+				continue;
+            }
+            return null;
+
         }
         while (f.next != null) {
+            count ++;
             f = f.next;
             s = s.next;
         }
+
+        if (count < k) return null;
         return s;
     }
 
@@ -44,6 +53,6 @@ public class LastKListNode {
 
     public static void main(String[] args) {
         ListNode listNode = ListNodeUtils.createListNode(new int[]{1, 2, 3, 4, 5});
-        System.out.println(findLastK(listNode, 5).val);
+        System.out.println(findLastK1(listNode, 5).val);
     }
 }
