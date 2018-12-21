@@ -1,7 +1,7 @@
 package leetcode;
 
 import leetcode.data.ListNode;
-import sort.util.ListNodeUtils;
+import utils.ListNodeUtils;
 
 /**
  * @version 1.0

@@ -1,6 +1,6 @@
 package sort.newcoder;
 
-import sort.util.SortUtils;
+import utils.SortUtils;
 
 /**
  * @version 1.0

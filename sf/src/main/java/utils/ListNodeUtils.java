@@ -1,4 +1,4 @@
-package sort.util;
+package utils;
 
 import leetcode.data.ListNode;
 
