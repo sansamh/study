@@ -1,7 +1,7 @@
 package sort.other;
 
 import leetcode.data.ListNode;
-import sort.util.ListNodeUtils;
+import utils.ListNodeUtils;
 
 public class LastKListNode {
     /**
