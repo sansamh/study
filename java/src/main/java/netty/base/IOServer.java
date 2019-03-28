@@ -1,4 +1,4 @@
-package netty;
+package netty.base;
 
 import java.io.IOException;
 import java.io.InputStream;
