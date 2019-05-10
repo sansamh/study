@@ -1,12 +1,12 @@
 package v1;
 
 import org.junit.AfterClass;
-import v1.beans.BeanDefinition;
-import v1.beans.BeanDefinitionRegistryException;
-import v1.beans.DefaultBeanFactory;
-import v1.beans.GenericBeanDefinition;
-import v1.sample.TestBean;
-import v1.sample.TestBeanFactory;
+import sansam.v1.beans.BeanDefinition;
+import sansam.v1.beans.BeanDefinitionRegistryException;
+import sansam.v1.beans.DefaultBeanFactory;
+import sansam.v1.beans.GenericBeanDefinition;
+import sansam.v1.sample.TestBean;
+import sansam.v1.sample.TestBeanFactory;
 
 /**
  * @version 1.0

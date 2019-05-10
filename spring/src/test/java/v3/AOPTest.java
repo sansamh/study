@@ -2,17 +2,16 @@ package v3;
 
 
 import org.junit.Test;
-import v3.advisor.AspectJPointCutAdvisor;
-import v3.aop.AdvisorAotuProxyCreater;
-import v3.beans.BeanReference;
-import v3.beans.GenericBeanDefinition;
-import v3.beans.PreBuildBeanFactory;
-import v3.samples.ABean;
-import v3.samples.CBean;
-import v3.samples.IABean;
-import v3.samples.aop.MyAfterReturningAdvice;
-import v3.samples.aop.MyBeforeAdvice;
-import v3.samples.aop.MyMethodInterceptor;
+import sansam.v3.advisor.AspectJPointCutAdvisor;
+import sansam.v3.aop.AdvisorAotuProxyCreater;
+import sansam.v3.beans.BeanReference;
+import sansam.v3.beans.GenericBeanDefinition;
+import sansam.v3.beans.PreBuildBeanFactory;
+import sansam.v3.samples.ABean;
+import sansam.v3.samples.CBean;
+import sansam.v3.samples.aop.MyAfterReturningAdvice;
+import sansam.v3.samples.aop.MyBeforeAdvice;
+import sansam.v3.samples.aop.MyMethodInterceptor;
 
 import java.util.ArrayList;
 import java.util.List;

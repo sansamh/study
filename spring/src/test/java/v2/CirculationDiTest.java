@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
-import v2.beans.BeanReference;
-import v2.beans.GenericBeanDefinition;
-import v2.beans.PreBuildBeanFactory;
-import v2.samples.DBean;
-import v2.samples.EBean;
+import sansam.v2.beans.BeanReference;
+import sansam.v2.beans.GenericBeanDefinition;
+import sansam.v2.beans.PreBuildBeanFactory;
+import sansam.v2.samples.DBean;
+import sansam.v2.samples.EBean;
 
 
 public class CirculationDiTest {

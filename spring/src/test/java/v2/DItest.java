@@ -4,11 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
-import v2.beans.*;
-import v2.samples.ABean;
-import v2.samples.ABeanFactory;
-import v2.samples.CBean;
-import v2.samples.CCBean;
+import sansam.v2.beans.BeanReference;
+import sansam.v2.beans.GenericBeanDefinition;
+import sansam.v2.beans.PreBuildBeanFactory;
+import sansam.v2.beans.*;
+import sansam.v2.samples.ABean;
+import sansam.v2.samples.ABeanFactory;
+import sansam.v2.samples.CBean;
+import sansam.v2.samples.CCBean;
 
 
 public class DItest {
