@@ -1,0 +1,5 @@
+# English Version
+io.sansam.spi.impl.EnglishDemoService
+
+# Chinese Version
+io.sansam.spi.impl.ChineseDemoService
