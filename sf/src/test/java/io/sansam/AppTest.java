@@ -4,7 +4,7 @@ import static org.junit.Assert.assertTrue;
 
 import leetcode.data.ListNode;
 import org.junit.Test;
-import sort.util.ListNodeUtils;
+import utils.ListNodeUtils;
 
 /**
  * Unit test for simple App.
