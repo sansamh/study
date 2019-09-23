@@ -45,7 +45,7 @@ public class MapPatternWapperRandom implements RandomDataWapper {
         } else {
             size = Integer.valueOf(length);
         }
-        if (!clz.isAssignableFrom(List.class)) {
+        if (!Map.class.isAssignableFrom(clz)) {
             throw new RgoInitFailedException("MapPattern Type is not a map!");
         }
         Map map = (Map) clz.newInstance();
@@ -59,6 +59,11 @@ public class MapPatternWapperRandom implements RandomDataWapper {
             fillMapWithString(map, size);
         }
         method.invoke(t, map);
+
+    }
+
+    @Override
+    public <T> void wapperWithSourceObejct(Field field, Method method, T t, Generate generate, Object target, Map<String, String> fieldMappingMap) throws Exception {
 
     }
 

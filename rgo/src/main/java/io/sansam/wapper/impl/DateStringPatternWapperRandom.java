@@ -22,8 +22,7 @@ import java.util.Map;
 public class DateStringPatternWapperRandom implements RandomDataWapper {
 
     @Override
-    public <T> void wapper(Field field, Method method, T t, Generate generate, Object target,
-                           Map<String, String> fieldMappingMap) throws Exception {
+    public <T> void wapper(Field field, Method method, T t, Generate generate) throws Exception {
         Class<?> type = field.getType();
         if (type != String.class) {
             throw new RgoInitFailedException(String.format("DateStringPattern must used in String filed, truth is " +
@@ -32,5 +31,11 @@ public class DateStringPatternWapperRandom implements RandomDataWapper {
         DateStringPattern annotation = field.getAnnotation(DateStringPattern.class);
         String pattern = annotation.pattern();
         method.invoke(t, new SimpleDateFormat(pattern).format(new Date()));
+    }
+
+    @Override
+    public <T> void wapperWithSourceObejct(Field field, Method method, T t, Generate generate, Object target,
+                                           Map<String, String> fieldMappingMap) throws Exception {
+
     }
 }

@@ -26,7 +26,19 @@ public interface RandomDataWapper {
      * @param <T>
      * @throws Exception
      */
-    <T> void wapper(Field field, Method method, T t, Generate generate, Object target,
+    <T> void wapper(Field field, Method method, T t, Generate generate) throws Exception;
+
+    /**
+     * 组装数据
+     *
+     * @param field
+     * @param method
+     * @param t
+     * @param generate
+     * @param <T>
+     * @throws Exception
+     */
+    <T> void wapperWithSourceObejct(Field field, Method method, T t, Generate generate, Object target,
                     Map<String, String> fieldMappingMap) throws Exception;
 
 }

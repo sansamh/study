@@ -24,8 +24,7 @@ public class BasicWapperRandom implements RandomDataWapper {
     private Logger logger = LoggerFactory.getLogger(BasicWapperRandom.class);
 
     @Override
-    public <T> void wapper(Field field, Method method, T t, Generate generate, Object target,
-                           Map<String, String> fieldMappingMap) throws Exception {
+    public <T> void wapper(Field field, Method method, T t, Generate generate) throws Exception {
         try {
             //如果是字节类型(包含基本类型和包装类)
             if (field.getType() == byte.class || field.getType() == Byte.class) {
@@ -78,5 +77,11 @@ public class BasicWapperRandom implements RandomDataWapper {
             e.printStackTrace();
             throw new Exception("BasicWapper wapper failed!");
         }
+    }
+
+    @Override
+    public <T> void wapperWithSourceObejct(Field field, Method method, T t, Generate generate, Object target,
+                                           Map<String, String> fieldMappingMap) throws Exception {
+
     }
 }

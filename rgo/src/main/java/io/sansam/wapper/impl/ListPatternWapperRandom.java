@@ -13,6 +13,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -58,6 +59,12 @@ public class ListPatternWapperRandom implements RandomDataWapper {
             fillListWithString(list, size);
         }
         method.invoke(t, list);
+
+    }
+
+    @Override
+    public <T> void wapperWithSourceObejct(Field field, Method method, T t, Generate generate, Object target,
+                                           Map<String, String> fieldMappingMap) throws Exception {
 
     }
 
